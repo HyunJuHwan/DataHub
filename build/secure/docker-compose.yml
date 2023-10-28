@@ -1,0 +1,13 @@
+ version: "3.8"
+ services:
+   security_back:
+     build: 
+      context: .
+      dockerfile: ./Dockerfile_for_back
+     image: security_back
+
+   security_front:
+     build: 
+      context: .
+      dockerfile: ./Dockerfile_for_front
+     image: security_front

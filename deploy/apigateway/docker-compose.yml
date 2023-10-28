@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  apigw:
+    image: apigw:latest
+    container_name: apigw
+    ports:
+      - 28888:28888
+    # volumes:
+    #   - ./logs:/logs
+    environment:
+      - TZ=Asia/Seoul
+      - SERVER_PORT=28888
+      # IP 변경해야 하고..
+      - EUREKA_DEFAULT_ZONE=http://${HOST_IP}:18888/eureka
+      - REDIS_HOST=${HOST_IP}
+      - DATASOURCE_URL= jdbc:postgresql://${HOST_IP}:4000/apigw
+      - DATASOURCE_USERNAME=postgres
+      - DATASOURCE_PASSWORD=nb1234
+      - CITYHUB_CLIENT_PUBLICKEYURI=http://${HOST_IP}:40000/security/publickey
+      # APIPUBLIC KEY는 security_back container 에서 복사해와야 함.
+      - APIPUBLIC=-----BEGIN PUBLIC KEY-----
+                    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAttjBOWPhaOXHdMQwiY33
+                    WHJGHkKyUIWe3UZRJseGt/7TOYMv+uaNhPBQlsPs1xFZjiravqRajXWcY+LLfJBK
+                    yeumvhoWCZ1ya/5fpsuKNW7PLxNVfgl8+UUs4nQfuyMeIN2Zf7G7VaaRi4ffEIz0
+                    pRgR4bPwAy086n+LJSdPBTBz50QfSXfbriLEdwpo4O9EYuzEd/23K6JH1CE7RFkM
+                    TrjIkT7lEsBzNGRMACg0UzP0ueQsObK//kF9Rye/2Oba4/y7pARutmLwmomFTujV
+                    9GXeHBs/+r65BnPfNtOD4iNGPGaui01xPJmdP9eAaKco0WJIbnNrBzh14sgCEeBC
+                    gQIDAQAB
+                -----END PUBLIC KEY-----
+    restart: always

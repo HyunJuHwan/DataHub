@@ -1,0 +1,12 @@
+[submodule "build/core/datacore"]
+	path = build/core/datacore
+	url = https://github.com/IoTKETI/citydatahub_data_core_module.git
+[submodule "build/secure/security"]
+	path = build/secure/security
+	url = https://github.com/IoTKETI/citydatahub_security_module.git
+[submodule "build/ingest/ingest"]
+	path = build/ingest/ingest
+	url = https://github.com/IoTKETI/citydatahub_data_ingest_module.git
+[submodule "build/apigateway/apigw"]
+	path = build/apigateway/apigw
+	url = https://github.com/IoTKETI/citydatahub_apigw_module.git

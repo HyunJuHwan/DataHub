@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  db:
+    image: postgresql
+    container_name: pgsql
+    environment:
+      TZ: Asia/Seoul
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nb1234
+      POSTGRES_DB: postgres
+      POSTGRES_INITDB_ARGS: "--locale=ko_KR.utf8"
+    ports:
+      - "4000:5432"
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data
+    restart: always
+volumes:
+  pgdata:

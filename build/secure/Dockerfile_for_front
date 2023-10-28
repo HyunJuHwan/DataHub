@@ -1,0 +1,13 @@
+FROM node:16.20.2-buster
+
+RUN mkdir -p /app
+
+WORKDIR /app
+
+COPY ./security/smartcity_front .
+
+RUN npm -g install pm2
+RUN npm install
+
+CMD ["pm2-runtime", "start", "--name", "security_front", "npm", "--", "start"]
+

@@ -1,0 +1,60 @@
+version: '3.8'
+  
+services:
+  
+  ingest-daemon:
+    container_name: ingest-daemon
+    image: ingest-daemon:latest
+    hostname: ingest-daemon
+    ports:
+      - 9888:8888
+    # volumes:
+    #   - ./logs:/opt/logs:Z  
+    environment:
+      - TZ=Asia/Seoul
+      - DATASOURCE_DRIVER=org.postgresql.Driver
+      - DATASOURCE_URL=jdbc:postgresql://${HOST_IP}:4000/ingest
+      - DATASOURCE_ID=smartcity
+      - DATASOURCE_PW=nb1234
+      - INGEST_INTERFACE_API_USE_YN=Y
+      # IP 변경해야..
+      - INGEST_INTERFACE_API_URL=http://${HOST_IP}:8082/entityOperations/upsert?options=update
+      - LOG_LEVEL=info
+    restart: always
+
+  ingest-web:
+    container_name: ingest-web
+    image: ingest-web:latest 
+    hostname: ingest-web
+    ports:
+      - 9080:8080
+    # volumes:
+    #   - ./logs:/opt/logs:Z        
+    environment:
+      - TZ=Asia/Seoul
+      - DATASOURCE_DRIVER=org.postgresql.Driver
+      - DATASOURCE_URL=jdbc:postgresql://${HOST_IP}:4000/ingest
+      - DATASOURCE_ID=smartcity
+      - DATASOURCE_PW=nb1234
+      - DAEMON_URL=http://ingest-daemon:8888
+      - DATAMODEL_API_URL=http://${HOST_IP}:808wlgh/datamodels
+      - INGEST_INTERFACE_API_USE_YN=Y
+      - INGEST_INTERFACE_API_URL=http://${HOST_IP}:8081/entityOperations/upsert?options=update
+      - AUTH_YN=Y
+      - AUTH_EXTERNAL_URL=http://${HOST_IP}:40000
+      - AUTH_INTERNAL_URL=http://${HOST_IP}:40000
+      # secure_user front (40001번 포트. coreadmin / admin45@) ui에 접속해서 application 등록후 문자열 복사
+      # 어플리케이션 이름 : ingestweb
+      # 리다이렉션 URI : http://${HOST_IP}:9080/accesstoken
+      - AUTH_CLIENT_ID=2fQyjcxDD7QLiAhVuyEi
+      # secure_user front ui에 접속해서 application 등록후 문자열 복사
+      - AUTH_CLIENT_SECRET=S75svJK2aNuZ8o0DTgxnHXLgftJHktBW	
+      - AUTH_REDIRECT_URL=http://${HOST_IP}:9080/accesstoken
+      - EUREKA_ENABLED=false
+      - EUREKA_EUREKA_DEFAULT_ZONE=http://${HOST_IP}:18888/eureka
+      - LOG_LEVEL=info
+    depends_on:
+      ingest-daemon:
+        condition: service_started     
+    restart: always   
+

@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+
+  data-manager:
+    build: ./datacore/datamanager
+    image: data-manager
+    
+  ingest-interface:
+    build: ./datacore/ingestinterface
+    image: ingest-interface
+
+  data-service-broker:
+    build: ./datacore/dataservicebroker
+    image: data-service-broker      
+
+  push-agent:
+    build: ./datacore/pushagent
+    image: push-agent      
+
+  datacore-ui:
+    build: ./datacore/ui
+    image: datacore-ui       
+
+  datacore-dashboard:
+    build: ./datacore/dashboard
+    image: datacore-usertool         

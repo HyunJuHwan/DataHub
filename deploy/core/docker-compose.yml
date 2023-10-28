@@ -1,0 +1,268 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.0.0
+    container_name: cp-zookeeper
+    tmpfs: /tmp
+    restart: always
+    ports:
+      - 2181:2181
+    environment:
+      TZ: Asia/Seoul
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:6.0.0
+    container_name: cp-kafka
+    ports:
+      - 29092:29092
+      - 9092:9092
+      # - 9101:9101
+    restart: always
+    environment:
+      TZ: Asia/Seoul
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      # KAFKA_JMX_PORT: 9101
+      # KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      zookeeper:
+        condition: service_started
+
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:6.0.0
+    container_name: cp-kafka-rest
+    ports:
+      - 18082:18082
+    environment:
+      TZ: Asia/Seoul
+      KAFKA_REST_HOST_NAME: rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: broker:29092
+      KAFKA_REST_LISTENERS: http://0.0.0.0:18082
+    depends_on:
+      broker:
+        condition: service_started
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 1883:1883
+    volumes:
+      - ./plugins.erl:/etc/rabbitmq/enabled_plugins      
+    environment:
+      TZ: Asia/Seoul
+      RABBITMQ_ERLANG_COOKIE: RabbitMQ-My-Cookies
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+
+  data-manager:
+    image: data-manager:latest
+    container_name: data-manager
+    restart: always
+    ports:
+      - 8080:8080
+    # volumes:
+    #   - ./logs/data-manager:/logs
+    environment:
+      TZ: Asia/Seoul
+      DATASOURCE_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_USERNAME: "smartcity"
+      DATASOURCE_PASSWORD: "nb1234"
+      DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_SECONDARY_USERNAME: "smartcity"
+      DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      KAFKA_SECURITY_YN: "N"
+      KAFKA_URL: broker:29092
+      EUREKA_CLIENT_ENABLED: false
+      EUREKA_INSTANCE_HOSTNAME: ${HOST_IP}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://${HOST_IP}:18888/eureka
+      REST_PROXY_URL: http://rest-proxy:18082
+      SECURITY_ACL_USEYN: "N"
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+
+  ingest-interface:
+    image: ingest-interface:latest
+    container_name: ingest-interface
+    restart: always
+    ports:
+      - 18081:8081
+      - 443:443
+    # volumes:
+    #   - ./logs/ingest-interface:/logs
+    environment:
+      TZ: Asia/Seoul
+      DATASOURCE_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_USERNAME: "smartcity"
+      DATASOURCE_PASSWORD: "nb1234"
+      DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_SECONDARY_USERNAME: "smartcity"
+      DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      KAFKA_SECURITY_YN: "N"
+      KAFKA_URL: broker:29092
+      EUREKA_CLIENT_ENABLED: false
+      EUREKA_INSTANCE_HOSTNAME: ${HOST_IP}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://${HOST_IP}:18888/eureka
+      SECURITY_ACL_USEYN: "N"
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+
+  data-service-broker:
+    image: data-service-broker:latest
+    container_name: data-service-broker
+    restart: always
+    ports:
+      - 8082:8082
+    # volumes:
+    #   - ./logs/data-service-broker:/logs
+    environment:
+      TZ: Asia/Seoul
+      DATASOURCE_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_USERNAME: "smartcity"
+      DATASOURCE_PASSWORD: "nb1234"
+      DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_SECONDARY_USERNAME: "smartcity"
+      DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      KAFKA_SECURITY_YN: "N"
+      KAFKA_URL: broker:29092
+      EUREKA_CLIENT_ENABLED: false
+      EUREKA_INSTANCE_HOSTNAME: ${HOST_IP}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://${HOST_IP}:18888/eureka
+      SPRING_SECURITY_ENABLED: false
+      SECURITY_ACL_USEYN: "N"
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+
+  datacore-ui:
+    image: datacore-ui:latest
+    container_name: datacore-ui
+    restart: always
+    ports:
+      - 8083:8083
+    # volumes:
+    #   - ./logs/datacore-ui:/logs
+    environment:
+      TZ: Asia/Seoul
+      DATASOURCE_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_USERNAME: "smartcity"
+      DATASOURCE_PASSWORD: "nb1234"
+      DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_SECONDARY_USERNAME: "smartcity"
+      DATAMANAGER_URL: http://data-manager:8080
+      INGESTINTERFACE_URL: http://ingest-interface:8081
+      DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      SPRING_SECURITY_ENABLED: true
+      # secure_user front ui (40001번 포트 : coreadmin / admin45@)에 접속해서 application 등록후 문자열 복사
+      # 어플리케이션 이름 : datacore
+      # 리다이렉션 URI : http://${HOST_IP}:8083/accesstoken
+      CITYHUB_CLIENT_CLIENTID: WhtPKrlTs7nsKIN2TfrG
+      # secure_user front ui에 접속해서 application 등록후 문자열 복사
+      CITYHUB_CLIENT_CLIENTSECRET: 5CRULPSCZmYqITfbxm4bA4T8SglyTsDG
+      CITYHUB_CLIENT_ACCESSTOKENURI: http://${HOST_IP}:40000/oauth2.0/token
+      CITYHUB_CLIENT_USERAUTHORIZATIONURI: http://${HOST_IP}:40000/oauth2.0/authorize
+      CITYHUB_CLIENT_PUBLICKEYURI: http://${HOST_IP}:40000/security/publickey
+      CITYHUB_CLIENT_LOGOUTURI: http://${HOST_IP}:40000/security/logout
+      CITYHUB_CLIENT_USERINFOURI: http://${HOST_IP}:40000/security/users
+      CITYHUB_CLIENT_REDIRECTURI: http://${HOST_IP}:8083/accesstoken
+      EUREKA_CLIENT_ENABLED: false
+      EUREKA_INSTANCE_HOSTNAME: ${HOST_IP}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://${HOST_IP}:18888/eureka
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+
+  datacore-dashboard:
+    image: datacore-usertool:latest
+    container_name: datacore-usertool
+    restart: always
+    ports:
+      - 8084:8084
+    # volumes:
+    #   - ./logs/datacore-usertool:/logs
+    environment:
+      TZ: Asia/Seoul
+      DATASOURCE_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_USERNAME: "smartcity"
+      DATASOURCE_PASSWORD: "nb1234"
+      DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
+      DATASOURCE_SECONDARY_USERNAME: "smartcity"
+      DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      DATAMANAGER_URL: http://data-manager:8080
+      INGESTINTERFACE_URL: http://ingest-interface:8081
+      SPRING_SECURITY_ENABLED: true
+      # secure_user front ui (40001번 포트 : coreadmin / admin45@)에 접속해서 application 등록후 문자열 복사
+      # 어플리케이션 이름 : dashboard
+      # 리다이렉션 URI : http://${HOST_IP}:8084/accesstoken
+      CITYHUB_CLIENT_CLIENTID: fNi9HPFL8u5VQHcLSWxq
+      # secure_user front ui에 접속해서 application 등록후 문자열 복사
+      CITYHUB_CLIENT_CLIENTSECRET: lPrZTdalFtXiUxDUwDyCyQWaXc1VVC4i
+      CITYHUB_CLIENT_REDIRECTURI: http://${HOST_IP}:8084/accesstoken
+      CITYHUB_CLIENT_USERAUTHORIZATIONURI: http://${HOST_IP}:40000/oauth2.0/authorize
+      CITYHUB_CLIENT_ACCESSTOKENURI: http://${HOST_IP}:40000/oauth2.0/token
+      CITYHUB_CLIENT_PUBLICKEYURI: http://${HOST_IP}:40000/security/publickey
+      CITYHUB_CLIENT_LOGOUTURI: http://${HOST_IP}:40000/security/logout
+      CITYHUB_CLIENT_USERINFOURI: http://${HOST_IP}:40000/security/users
+      GOOGLE_API_KEY: XXXXXXXXXXXXXXXXXXX-XXX_XXXXXXXXXXXXXXX
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+
+  push-agent:
+    image: push-agent:latest
+    container_name: push-agent
+    restart: always
+    # volumes:
+    #   - ./logs/push-agent:/logs
+    environment:
+      TZ: Asia/Seoul
+      KAFKA_SECURITY_YN: "N"
+      KAFKA_URL: broker:29092
+      JVM_OPTS: -Xmx2048m -Xms2048m
+    depends_on:
+      broker:
+        condition: service_started
+      rest-proxy:
+        condition: service_started
+
+networks:
+  default:
+    name: citydatahub-datacore
+    external: true

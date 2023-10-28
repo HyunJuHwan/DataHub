@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+
+  postgresql:
+    build: ./
+    image: postgresql
+

@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+
+  ingest-daemon:
+    build: 
+      context: ./ingest/ingest-daemon
+      args:
+        U_ID: 1000
+        G_ID: 1000
+        USER: datahub
+        TZ: Asia/Seoul
+        JAR_FILE: ingest-daemon-1.0.0.jar
+    image: ingest-daemon
+
+
+  ingest-web:
+    build:
+      context: ./ingest/ingest-web
+      args:
+        U_ID: 1000
+        G_ID: 1000
+        USER: datahub
+        TZ: Asia/Seoul
+        JAR_FILE: ingest-web-1.0.0.jar
+    image: ingest-web

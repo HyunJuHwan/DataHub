@@ -1,0 +1,14 @@
+docker save -o ../deploy/tar/apigw.tar apigw
+docker save -o ../deploy/tar/security_front.tar security_front
+docker save -o ../deploy/tar/security_back.tar security_back
+docker save -o ../deploy/tar/ingest-daemon.tar ingest-daemon
+docker save -o ../deploy/tar/ingest-web.tar ingest-web
+docker save -o ../deploy/tar/ingest-interface.tar ingest-interface
+docker save -o ../deploy/tar/datacore-ui.tar datacore-ui
+docker save -o ../deploy/tar/data-service-broker.tar data-service-broker
+docker save -o ../deploy/tar/datacore-ui.tar datacore-ui
+docker save -o ../deploy/tar/data-manager.tar data-manager
+docker save -o ../deploy/tar/push-agent.tar push-agent
+docker save -o ../deploy/tar/datacore-usertool.tar datacore-usertool
+docker save -o ../deploy/tar/postgresql.tar postgresql
+docker save -o ../deploy/tar/eureka.tar eureka

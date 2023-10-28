@@ -1,0 +1,69 @@
+version: "3.8"
+services:
+
+  security_back_user:
+    image: security_back:latest
+    container_name: security_back_user
+    ports:
+      - 40000:40000
+    volumes:
+      - ./generate_server_config.js:/app/generate_server_config.js
+      # - ./server_conf_user.json:/app/server_conf.json
+      # - ./logs/back:/logs
+    command: sh -c "node generate_server_config.js && cd initDB && node createTable.js && pm2-runtime start --name security_back npm -- start"
+    # command: sh -c "cd initDB && node createTable.js && pm2-runtime start --name security_back npm -- start"
+    environment:
+      - TZ=Asia/Seoul
+      - HOST_IP=${HOST_IP}
+      - PROGRAM_TYPE=user
+    restart: on-failure
+
+  security_front_user:
+    image: security_front:latest
+    container_name: security_front_user
+    ports:
+      - 40001:40001
+    volumes:
+      - ./config_user.js:/app/src/config.js
+      - ./package_user.json:/app/package.json
+      # - ./logs/front:/logs
+    command: sh -c "chown root:root /app/src/config.js /app/package.json && pm2-runtime start --name security_front npm -- start"
+    # command:
+    #   - /bin/bash
+    #   - -c
+    #   - |
+    #     chown root:root /app/src/config.js /app/package.json
+    #     pm2-runtime start --name security_front npm -- start
+    environment:
+      - TZ=Asia/Seoul
+    restart: on-failure
+
+  security_back_admin:
+    image: security_back:latest
+    container_name: security_back_admin
+    ports:
+      - 30000:30000
+    # volumes:
+      # - ./server_conf_admin.json:/app/server_conf.json
+      # - ./generate_server_config.js:/app/generate_server_config.js
+      # - ./logs/back:/logs
+    # command: sh -c "node generate_server_config.js" # && cd initDB && node createTable.js && pm2-runtime start --name security_back npm -- start"
+    environment:
+      - TZ=Asia/Seoul
+      - HOST_IP=${HOST_IP}
+      - PROGRAM_TYPE=admin
+    restart: on-failure
+
+  security_front_admin:
+    image: security_front:latest
+    container_name: security_front_admin
+    ports:
+      - 30001:30001
+    volumes:
+      - ./config_admin.js:/app/src/config.js
+      - ./package_admin.json:/app/package.json
+      # - ./logs/front:/logs
+    command: sh -c "chown root:root /app/src/config.js /app/package.json && pm2-runtime start --name security_front npm -- start"
+    environment:
+      - TZ=Asia/Seoul
+    restart: on-failure

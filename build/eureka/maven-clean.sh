@@ -1,0 +1,1 @@
+docker run -it --rm -v "$(pwd)":/eureka -w /eureka/demo adoptopenjdk/maven-openjdk11 mvn -DskipTests clean package

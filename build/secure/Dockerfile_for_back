@@ -1,0 +1,17 @@
+
+FROM node:16.20.2-buster
+
+RUN mkdir -p /app
+
+WORKDIR /app
+
+COPY ./security/smartcity_back .
+
+RUN npm install
+RUN node initDB/createTable.js &
+RUN node keys/initKey.js
+
+RUN npm -g install pm2
+
+CMD ["pm2-runtime", "start", "bin/www", "--name", "security_back"]
+

@@ -1,0 +1,6 @@
+*.tar
+*.jar
+node_modules
+target
+logs
+dump.rdb
