@@ -9,6 +9,7 @@ cd deploy
 ```
 
 ## 환경설정
+- deploy/.env 파일에서 IP주소 수정
 - all-deploy.sh 실행후 생성되는 deploy/keys/public.pem 파일의 내용을 deploy/apigateway/docker-compose.yml 파일의 APIPUBLIC 환경변수에 복사.
 - all-deploy.sh 재실행
 - http://[server]:40001 에 접속 (coreadmin / admin45@) 하여 어플리케이션 등록후 정보 등록
