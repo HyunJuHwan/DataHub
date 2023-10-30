@@ -2,7 +2,7 @@ docker network create citydatahub-datacore
 
 
 docker compose -f ./postgre/docker-compose.yml up -d
-docker compose -f ./eureka/docker-compose.yml up -d
+docker compose -f ./eureka/docker-compose.yml --env-file=".env" up -d
 docker compose -f ./redis/docker-compose.yml up -d
 docker compose -f ./core/docker-compose.yml --env-file=".env" up -d
 docker compose -f ./ingest/docker-compose.yml --env-file=".env" up -d

@@ -10,3 +10,5 @@ services:
     #   - ./logs:/logs
     environment:
       - TZ=Asia/Seoul
+      - HOST_IP=${HOST_IP}
+
