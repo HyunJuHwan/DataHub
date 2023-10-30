@@ -6,7 +6,6 @@ docker save -o ../deploy/tar/ingest-web.tar ingest-web
 docker save -o ../deploy/tar/ingest-interface.tar ingest-interface
 docker save -o ../deploy/tar/datacore-ui.tar datacore-ui
 docker save -o ../deploy/tar/data-service-broker.tar data-service-broker
-docker save -o ../deploy/tar/datacore-ui.tar datacore-ui
 docker save -o ../deploy/tar/data-manager.tar data-manager
 docker save -o ../deploy/tar/push-agent.tar push-agent
 docker save -o ../deploy/tar/datacore-usertool.tar datacore-usertool
