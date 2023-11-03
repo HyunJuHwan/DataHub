@@ -1,0 +1,13 @@
+diff --git a/ingest-adapter/src/main/java/com/cityhub/adapter/LegacyPlatform.java b/ingest-adapter/src/main/java/com/cityhub/adapter/LegacyPlatform.java
+index 08205bb..a3e5102 100644
+--- a/ingest-adapter/src/main/java/com/cityhub/adapter/LegacyPlatform.java
++++ b/ingest-adapter/src/main/java/com/cityhub/adapter/LegacyPlatform.java
+@@ -85,7 +85,7 @@ public class LegacyPlatform extends AbstractSource implements PollableSource , C
+     ConfItem.put("invokeClass", context.getString("INVOKE_CLASS", ""));
+     ConfItem.put("modelId", context.getString("MODEL_ID", ""));
+     ConfItem.put("datasetId", context.getString("DATASET_ID", ""));
+-    ConfItem.put("adapterType", adapterType);
++    ConfItem.put("adapterType", context.getString("type", ""));
+     ConfItem.put("sourceName", this.getName());
+   }
+ 

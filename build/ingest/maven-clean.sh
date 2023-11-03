@@ -1,3 +1,5 @@
+cp add_files/commons-pool2-2.12.0.jar ./ingest/ingest-daemon/src/main/docker/agent/libext/commons-pool2-2.12.0.jar
+
 docker run -it --rm -v $(pwd):/ingest -w /ingest/ingest adoptopenjdk/maven-openjdk11 mvn -DskipTests clean package
 
 cp -f ingest/ingest-adapter/target/ingest-adapter-1.0.0.jar ingest/ingest-daemon/src/main/docker/agent/lib/

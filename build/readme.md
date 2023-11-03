@@ -13,6 +13,8 @@ cd build/core/datacore
 git apply < ../../diff-core.txt
 cd build/secure/security
 git apply < ../../diff-security.txt
+cd build/ingest/ingest
+git apply < ../../diff-ingest.txt
 ```
 
 ## 빌드 
