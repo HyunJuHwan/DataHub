@@ -1,5 +1,4 @@
 *.tar
-*.jar
 node_modules
 target
 logs
