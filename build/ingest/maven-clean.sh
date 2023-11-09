@@ -1,4 +1,4 @@
-cp add_files/commons-pool2-2.12.0.jar ./ingest/ingest-daemon/src/main/docker/agent/libext/commons-pool2-2.12.0.jar
+cp add_files/commons-pool2-2.12.1.jar ./ingest/ingest-daemon/src/main/docker/agent/libext/commons-pool2-2.12.1.jar
 cp add_files/ConvSoilData.java ./ingest/ingest-adapter/src/main/java/com/cityhub/adapter/convex/ConvSoilData.java
 
 docker run -it --rm -v $(pwd):/ingest -w /ingest/ingest adoptopenjdk/maven-openjdk11 mvn -DskipTests clean package
