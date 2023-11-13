@@ -11,3 +11,19 @@ index 08205bb..a3e5102 100644
      ConfItem.put("sourceName", this.getName());
    }
  
+diff --git a/ingest-daemon/pom.xml b/ingest-daemon/pom.xml
+index 1acb3ee..f4b588d 100644
+--- a/ingest-daemon/pom.xml
++++ b/ingest-daemon/pom.xml
+@@ -94,6 +94,11 @@
+       <artifactId>commons-dbcp2</artifactId>
+     </dependency>
+ 
++    <dependency>
++      <groupId>org.apache.commons</groupId>
++      <artifactId>commons-pool2</artifactId>
++    </dependency>
++
+     <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+     <dependency>
+         <groupId>org.glassfish.jaxb</groupId>
