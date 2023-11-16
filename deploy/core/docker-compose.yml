@@ -221,8 +221,10 @@ services:
       DATASOURCE_SECONDARY_URL: jdbc:postgresql://${HOST_IP}:4000/datacore
       DATASOURCE_SECONDARY_USERNAME: "smartcity"
       DATASOURCE_SECONDARY_PASSWORD: "nb1234"
+      DATACOREUSERTOOL_URL: http://datacore-dashboard:8084/notification
+      DATACOREUSERTOOL_WIDGET_URL: http://datacore-dashboard:8084/widgetnotification
       DATAMANAGER_URL: http://data-manager:8080
-      INGESTINTERFACE_URL: http://ingest-interface:8081
+      DATASERVICEBROKER_URL: http://data-service-broker:8082
       SPRING_SECURITY_ENABLED: true
       # secure_user front ui (40001번 포트 : coreadmin / admin45@)에 접속해서 application 등록후 문자열 복사
       # 어플리케이션 이름 : dashboard
