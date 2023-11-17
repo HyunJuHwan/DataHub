@@ -1,3 +1,35 @@
+diff --git a/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/api/subscription/service/SubscriptionSVC.java b/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/api/subscription/service/SubscriptionSVC.java
+index 995dfaf..2eeeb89 100644
+--- a/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/api/subscription/service/SubscriptionSVC.java
++++ b/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/api/subscription/service/SubscriptionSVC.java
+@@ -164,7 +164,11 @@ public class SubscriptionSVC {
+ 			if(dataModelVO.getBody() != null) {
+ 				entityInfo.setType(dataModelVO.getBody().getTypeUri());
+ 				context.addAll(dataModelVO.getBody().getContext());
+-
++				List attsData = new ArrayList<>();
++				for(Attribute attribute : dataModelVO.getBody().getAttributes()) {
++					attsData.add(attribute.getName());
++				}
++				subscriptionUIVO.setAttrs(attsData);
+ 				expandAttributeUri(subscriptionUIVO.getAttrs(), dataModelVO.getBody().getAttributes(), notificationAttributeUris);
+ 
+ 			} else {
+diff --git a/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/notification/websocket/WebSocketSessionManager.java b/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/notification/websocket/WebSocketSessionManager.java
+index 3f5c11d..bad042d 100644
+--- a/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/notification/websocket/WebSocketSessionManager.java
++++ b/dashboard/src/main/java/kr/re/keti/sc/datacoreusertool/notification/websocket/WebSocketSessionManager.java
+@@ -59,7 +59,9 @@ public enum WebSocketSessionManager {
+     			continue;
+     		}
+     		try {
+-    			webSocketServerEndpoint.getSession().getBasicRemote().sendText(message);
++    			synchronized(webSocketServerEndpoint.getSession()) {
++                    webSocketServerEndpoint.getSession().getBasicRemote().sendText(message);
++                };
+             } catch (IOException e) {
+                 log.warn("Caught exception while sending message to Session " + webSocketServerEndpoint.getId(), e);
+             }
 diff --git a/dataservicebroker/src/main/java/kr/re/keti/sc/dataservicebroker/common/code/Constants.java b/dataservicebroker/src/main/java/kr/re/keti/sc/dataservicebroker/common/code/Constants.java
 index 9d25ed5..423b41d 100644
 --- a/dataservicebroker/src/main/java/kr/re/keti/sc/dataservicebroker/common/code/Constants.java
